@@ -42,12 +42,6 @@ public:
 	int z;
 };
 
-
-void * operator new(size_t len)
-{
-	return malloc(len);
-}
-
 TEST_CASE(testGarbage)
 {
 	{

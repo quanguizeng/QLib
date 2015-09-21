@@ -41,3 +41,23 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+*.exe
+QLib/Debug/QLib.pdb
+*.ipch
+QLib/QLib.opensdf
+*.sdf
+QLib/QLib/Debug/QLib.log
+*.obj
+QLib/QLib/Debug/vc120.idb
+*.idb
+QLib/QLib/Debug/vc120.pdb
+*.pdb
+QLib/QLib/Debug/vc120.idb
+*.tlog
+QLib/QLib/Debug/QLib.obj
+*.pdb
+QLib/QLib/Debug/vc120.pdb
+QLib/Debug/QLib.ilk
+*.log
+QLib/QLib/Debug/QLib.obj
+*.tlog
