@@ -1,6 +1,6 @@
 //##########################################################################
 //Qlib 1.0
-//Developer:曾全贵
+//ПЊЗЂеп:дјШЋЙѓ
 //##########################################################################
 
 /*
@@ -27,21 +27,6 @@ along with MyGUI.  If not, see <http://www.gnu.org/licenses/>.
 #include <typeinfo>
 
 using namespace std;
-
-class IDelegateUnlink
-{
-public:
-	virtual ~IDelegateUnlink() { }
-
-	IDelegateUnlink() { m_baseDelegateUnlink = this; }
-	bool compare(IDelegateUnlink * _unlink) const { return m_baseDelegateUnlink == _unlink->m_baseDelegateUnlink; }
-
-private:
-	IDelegateUnlink * m_baseDelegateUnlink;
-};
-
-inline IDelegateUnlink * GetDelegateUnlink(void * _base) { return 0; }
-inline IDelegateUnlink * GetDelegateUnlink(IDelegateUnlink * _base) { return _base; }
 
 template<typename TP1, typename TP2>
 class IDelegate2
@@ -90,31 +75,30 @@ public:
 		CMethodDelegate2 <T, TP1, TP2>  * cast = static_cast<  CMethodDelegate2 <T, TP1, TP2>  * >(_delegate);
 		return cast->mObject == mObject && cast->mMethod == mMethod;
 	}
-
 private:
 	T * mObject;
 	Method mMethod;
 };
 template   <typename TP1, typename TP2>
-inline  IDelegate2 <typename TP1, typename TP2>  * newDelegate(void(*_func)(TP1 p1, TP2 p2))
+inline  IDelegate2 <typename TP1, typename TP2>  * createDelegate(void(*_func)(TP1 p1, TP2 p2))
 {
 	return new CStaticDelegate2 <typename TP1, typename TP2>(_func);
 }
 template <typename T, typename TP1, typename TP2>
-inline  IDelegate2 <typename TP1, typename TP2>  * newDelegate(T * _object, void (T::*_method)(TP1 p1, TP2 p2))
+inline  IDelegate2 <typename TP1, typename TP2>  * createDelegate(T * _object, void (T::*_method)(TP1 p1, TP2 p2))
 {
 	return new CMethodDelegate2  <T, TP1, TP2>(_object, _method);
 }
 template   <typename TP1, typename TP2>
-class CMultiDelegate2
+class CMultiDelegate
 {
 public:
 	typedef IDelegate2 <typename TP1, typename TP2>  IDelegate;
 	typedef typename std::list<IDelegate*> ListDelegate;
 	typedef typename ListDelegate::iterator ListDelegateIterator;
 	typedef typename ListDelegate::const_iterator ConstListDelegateIterator;
-	CMultiDelegate2() { }
-	~CMultiDelegate2() { clear(); }
+	CMultiDelegate() { }
+	~CMultiDelegate() { clear(); }
 	bool empty() const
 	{
 		for (ConstListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
@@ -134,7 +118,7 @@ public:
 			}
 		}
 	}
-	CMultiDelegate2  <typename TP1, typename TP2> & operator+=(IDelegate* _delegate)
+	CMultiDelegate  <typename TP1, typename TP2> & operator+=(IDelegate* _delegate)
 	{
 		for (ListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
 		{
@@ -147,7 +131,7 @@ public:
 		mListDelegates.push_back(_delegate);
 		return *this;
 	}
-	CMultiDelegate2  <typename TP1, typename TP2> & operator-=(IDelegate* _delegate)
+	CMultiDelegate  <typename TP1, typename TP2> & operator-=(IDelegate* _delegate)
 	{
 		for (ListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
 		{
@@ -178,8 +162,8 @@ public:
 		}
 	}
 private:
-	CMultiDelegate2(const CMultiDelegate2  <typename TP1, typename TP2> & _event);
-	CMultiDelegate2<typename TP1, typename TP2> & operator=(const CMultiDelegate2<typename TP1, typename TP2> & _event);
+	CMultiDelegate(const CMultiDelegate  <typename TP1, typename TP2> & _event);
+	CMultiDelegate<typename TP1, typename TP2> & operator=(const CMultiDelegate<typename TP1, typename TP2> & _event);
 private:
 	ListDelegate mListDelegates;
 };

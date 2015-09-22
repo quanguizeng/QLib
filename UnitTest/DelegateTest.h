@@ -12,18 +12,21 @@ using namespace QLib;
 class CParam
 {
 public:
-	CParam()
+	CParam(int main, int sub)
 	{
-
+		mMain = main;
+		mSub = sub;
+		mValue = 0;
 	}
 	~CParam()
 	{
 
 	}
 
-	int main;
-	int sub;
-	int value;
+public:
+	int mMain;
+	int mSub;
+	int mValue;
 };
 
 class CReturn
@@ -31,138 +34,166 @@ class CReturn
 public:
 	CReturn()
 	{
-
+		mFlag = false;
+		mValue = 0;
 	}
 	~CReturn()
 	{
 
 	}
 
-	bool flag;
-	int value;
+public:
+	bool mFlag;
+	int mValue;
 };
 
 class CTest1
 {
 public:
-	CTest1()
+	CTest1(int main, int sub)
 	{
-
+		mMain = main;
+		mSub = sub;
 	}
 	~CTest1()
 	{
 
 	}
 
-	void MyFunc(void* pParams, void *pReturn)
+	void myFunc(void* pParams, void *pReturn)
 	{
-		cout << "CTest1::MyFunc" << endl;
+		TEST_ASSERT(pParams);
+		TEST_ASSERT(pReturn);
+		if (pParams == NULL || pReturn == NULL)
+		{
+			return;
+		}
+		CParam *pParams2 = (CParam*)pParams;
+		CReturn *pReturn2 = (CReturn*)pReturn;
+		pReturn2->mFlag = true;
+		if (pParams2->mMain == mMain && pParams2->mSub == mSub)
+		{
+			pReturn2->mValue = 100;
+			cout << "CTest1::myFunc" << endl;
+		}
 	}
 
-	int main;
-	int sub;
+public:
+	int mMain;
+	int mSub;
 };
 
 class Test2
 {
 public:
-	Test2()
+	Test2(int main, int sub)
 	{
-
+		mMain = main;
+		mSub = sub;
 	}
 	~Test2()
 	{
 
 	}
 
-	void MyFunc(void* pParams, void *pReturn)
+	void myFunc(void* pParams, void *pReturn)
 	{
-		cout << "Test2::MyFunc" << endl;
+		if (pParams == NULL || pReturn == NULL)
+		{
+			return;
+		}
+		CParam *pParams2 = (CParam*)pParams;
+		CReturn *pReturn2 = (CReturn*)pReturn;
+
+		pReturn2->mFlag = true;
+		if (pParams2->mMain == mMain && pParams2->mSub == mSub)
+		{
+			pReturn2->mValue = 200;
+			cout << "Test2::myFunc" << endl;
+		}
 	}
 
-	int main;
-	int sub;
+private:
+	int mMain;
+	int mSub;
 };
 
-// 普通函数1
-void func(int a, int b)
+void func(int x, int y)
 {
-	cout << "func(" << a << ", " << b << ")" << endl;
+	cout << "func(" << x << ", " << y << ")" << endl;
 }
 
-// 普通函数2
-void func2(int a, int b)
+void func2(int x, int y)
 {
-	cout << "func2(" << a << ", " << b << ")" << endl;
+	cout << "func2(" << x << ", " << y << ")" << endl;
 }
 
-// 普通类
 class NormalClass
 {
 public:
-	// 类的普通成员函数
-	void normalFunc(int a, int b)
+	void normalFunc(int x, int y)
 	{
-		cout << "NormalClass::normalFunc(" << a << ", " << b << ")" << endl;
+		cout << "NormalClass::normalFunc(" << x << ", " << y << ")" << endl;
 	}
 };
 
-class BaseUnlinkClass
+class BaseClass
 {
 public:
-	// 类的虚函数
-	virtual void virFunc(int a, int b)
+	virtual void virFunc(int x, int y)
 	{
-		cout << "BaseUnlinkClass::virFunc(" << a << ", " << b << ")" << endl;
+		cout << "BaseClass::virFunc(" << x << ", " << y << ")" << endl;
 	}
 
-	// 类的普通成员函数
-	void normalFunc(int a, int b)
+	void normalFunc(int x, int y)
 	{
-		cout << "BaseUnlinkClass::normalFunc(" << a << ", " << b << ")" << endl;
+		cout << "BaseClass::normalFunc(" << x << ", " << y << ")" << endl;
 	}
 };
 
-class DerivedClass : public BaseUnlinkClass
+class DerivedClass : public BaseClass
 {
 public:
-	// 类的虚函数
-	virtual void virFunc(int a, int b)
+	virtual void virFunc(int x, int y)
 	{
-		cout << "DerivedClass::virFunc(" << a << ", " << b << ")" << endl;
+		cout << "DerivedClass::virFunc(" << x << ", " << y << ")" << endl;
 	}
 
-	// 类的静态成员函数
-	static void staticFunc(int a, int b)
+	static void staticFunc(int x, int y)
 	{
-		cout << "DerivedClass::staticFunc(" << a << ", " << b << ")" << endl;
+		cout << "DerivedClass::staticFunc(" << x << ", " << y << ")" << endl;
 	}
 };
 
-// 模板函数
 template<class T>
-void TFunc(T a, T b)
+void tFunc(T x, T y)
 {
-	cout << "TFunc(" << a << ", " << b << ")" << endl;
+	cout << "tFunc(" << x << ", " << y << ")" << endl;
 }
 
 TEST_CASE(testDelegate)
 {
 	{
-		// 定义委托
-		typedef CMultiDelegate2<void*, void*> EvenetHandler;
+		typedef CMultiDelegate<void*, void*> EvenetHandler;
 		EvenetHandler event;
 
-		CTest1 *pTest1 = new CTest1();
-		Test2 *pTest2 = new Test2();
-		CParam *pParam = new CParam();
+		CTest1 *pTest1 = new CTest1(1, 1);
+		Test2 *pTest2 = new Test2(2,1);
+		CParam *pParam = new CParam(1, 1);
 		CReturn *pReturn = new CReturn();
 
-		// 添加类的普通成员函
-		event += newDelegate(pTest1, &CTest1::MyFunc);
-		event += newDelegate(pTest2, &Test2::MyFunc);
+		event += createDelegate(pTest1, &CTest1::myFunc);
+		event += createDelegate(pTest2, &Test2::myFunc);
 
 		event((void*)pParam, (void*)pReturn);
+		TEST_ASSERT(pReturn->mFlag == true);
+		TEST_ASSERT(pReturn->mValue == 100);
+
+		pParam->mMain = 2;
+		pParam->mSub = 1;
+		event((void*)pParam, (void*)pReturn);
+		TEST_ASSERT(pReturn->mFlag == true);
+		TEST_ASSERT(pReturn->mValue == 200);
 
 		delete pTest1;
 		delete pTest2;
@@ -171,51 +202,40 @@ TEST_CASE(testDelegate)
 	}
 
 	{
-		BaseUnlinkClass *baseUnlinkClass = new BaseUnlinkClass;
-		DerivedClass *derivedClass = new DerivedClass;
-		NormalClass *normalClass = new NormalClass;
-
-		// 定义委托
-		typedef CMultiDelegate2<int, int> EvenetHandler;
+		typedef CMultiDelegate<int, int> EvenetHandler;
 		EvenetHandler event;
 
-		// 添加普通函数
-		event += newDelegate(func);
-		event += newDelegate(func2);
+		BaseClass *pBaseClass = new BaseClass;
+		DerivedClass *pDerivedClass = new DerivedClass;
+		NormalClass *pNormalClass = new NormalClass;
 
-		// 添加类的普通成员函数
-		event += newDelegate(normalClass, &NormalClass::normalFunc);
-		event += newDelegate(baseUnlinkClass, &BaseUnlinkClass::normalFunc);
+		event += createDelegate(func);
+		event += createDelegate(func2);
 
-		// 添加类的虚函数
-		event += newDelegate(baseUnlinkClass, &BaseUnlinkClass::virFunc);
-		event += newDelegate(derivedClass, &DerivedClass::virFunc);
-		// 注意在多态下，使用基类指针时，函数指针要用基类的函数指针，不能用派生类的
-		// 但是在调用时会响应多态，也就是会调用派生类的虚函数
-		event += newDelegate((BaseUnlinkClass*)derivedClass, &BaseUnlinkClass::virFunc);
+		event += createDelegate(pNormalClass, &NormalClass::normalFunc);
+		event += createDelegate(pBaseClass, &BaseClass::normalFunc);
 
-		// 添加类的静态成员函数
-		event += newDelegate(&DerivedClass::staticFunc);
+		event += createDelegate(pBaseClass, &BaseClass::virFunc);
+		event += createDelegate(pDerivedClass, &DerivedClass::virFunc);
+		// 多态下，使用基类指针时，函数指针要用基类的函数指针，但是在调用时会响应多态，调用派生类的虚函数
+		event += createDelegate((BaseClass*)pDerivedClass, &BaseClass::virFunc);
 
-		// 添加模板函数
-		event += newDelegate(TFunc<int>);
+		event += createDelegate(&DerivedClass::staticFunc);
 
-		// 触发事件
-		event(1, 2);
+		event += createDelegate(tFunc<int>);
+
+		event(10, 20);
 		cout << endl;
 
-		// 去掉函数
-		event -= newDelegate(func);
+		event -= createDelegate(func);
+		event -= createDelegate(pNormalClass, &NormalClass::normalFunc);
 
-		event -= newDelegate(normalClass, &NormalClass::normalFunc);
-
-		// 触发事件
-		event(2, 3);
+		event(20, 30);
 		cout << endl;
 
-		delete baseUnlinkClass;
-		delete derivedClass;
-		delete normalClass;
+		delete pBaseClass;
+		delete pDerivedClass;
+		delete pNormalClass;
 	}
 }
 
