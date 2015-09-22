@@ -29,50 +29,50 @@ along with MyGUI.  If not, see <http://www.gnu.org/licenses/>.
 using namespace std;
 
 template<typename TP1, typename TP2>
-class IDelegate2
+class IDelegate
 {
 public:
-	virtual ~IDelegate2() { }
+	virtual ~IDelegate() { }
 	virtual bool isType(const std::type_info& _type) = 0;
 	virtual void invoke(TP1 p1, TP2 p2) = 0;
-	virtual bool compare(IDelegate2<typename TP1, typename TP2> *_delegate) const = 0;
+	virtual bool compare(IDelegate<typename TP1, typename TP2> *_delegate) const = 0;
 };
 
 template<typename TP1, typename TP2>
-class CStaticDelegate2 : public  IDelegate2<typename TP1, typename TP2>
+class CStaticDelegate : public  IDelegate<typename TP1, typename TP2>
 {
 public:
 	typedef void(*Func)(TP1 p1, TP2 p2);
-	CStaticDelegate2(Func _func) : mFunc(_func) { }
-	virtual bool isType(const std::type_info& _type) { return typeid(CStaticDelegate2<typename TP1, typename TP2>) == _type; }
+	CStaticDelegate(Func _func) : mFunc(_func) { }
+	virtual bool isType(const std::type_info& _type) { return typeid(CStaticDelegate<typename TP1, typename TP2>) == _type; }
 	virtual void invoke(TP1 p1, TP2 p2)
 	{
 		mFunc(p1, p2);
 	}
-	virtual bool compare(IDelegate2<typename TP1, typename TP2> *_delegate) const
+	virtual bool compare(IDelegate<typename TP1, typename TP2> *_delegate) const
 	{
-		if (0 == _delegate || !_delegate->isType(typeid(CStaticDelegate2 <typename TP1, typename TP2>))) return false;
-		CStaticDelegate2 <typename TP1, typename TP2> * cast = static_cast<CStaticDelegate2 <typename TP1, typename TP2> *>(_delegate);
+		if (0 == _delegate || !_delegate->isType(typeid(CStaticDelegate <typename TP1, typename TP2>))) return false;
+		CStaticDelegate <typename TP1, typename TP2> * cast = static_cast<CStaticDelegate <typename TP1, typename TP2> *>(_delegate);
 		return cast->mFunc == mFunc;
 	}
 private:
 	Func mFunc;
 };
 template <typename T, typename TP1, typename TP2>
-class CMethodDelegate2 : public  IDelegate2 <typename TP1, typename TP2>
+class CMethodDelegate : public  IDelegate <typename TP1, typename TP2>
 {
 public:
 	typedef void (T::*Method)(TP1 p1, TP2 p2);
-	CMethodDelegate2(T * _object, Method _method) : mObject(_object), mMethod(_method) { }
-	virtual bool isType(const std::type_info& _type) { return typeid(CMethodDelegate2 <T, TP1, TP2>) == _type; }
+	CMethodDelegate(T * _object, Method _method) : mObject(_object), mMethod(_method) { }
+	virtual bool isType(const std::type_info& _type) { return typeid(CMethodDelegate <T, TP1, TP2>) == _type; }
 	virtual void invoke(TP1 p1, TP2 p2)
 	{
 		(mObject->*mMethod)(p1, p2);
 	}
-	virtual bool compare(IDelegate2 <typename TP1, typename TP2>  * _delegate) const
+	virtual bool compare(IDelegate <typename TP1, typename TP2>  * _delegate) const
 	{
-		if (0 == _delegate || !_delegate->isType(typeid(CMethodDelegate2 <T, TP1, TP2>))) return false;
-		CMethodDelegate2 <T, TP1, TP2>  * cast = static_cast<  CMethodDelegate2 <T, TP1, TP2>  * >(_delegate);
+		if (0 == _delegate || !_delegate->isType(typeid(CMethodDelegate <T, TP1, TP2>))) return false;
+		CMethodDelegate <T, TP1, TP2>  * cast = static_cast<  CMethodDelegate <T, TP1, TP2>  * >(_delegate);
 		return cast->mObject == mObject && cast->mMethod == mMethod;
 	}
 private:
@@ -80,21 +80,21 @@ private:
 	Method mMethod;
 };
 template   <typename TP1, typename TP2>
-inline  IDelegate2 <typename TP1, typename TP2>  * createDelegate(void(*_func)(TP1 p1, TP2 p2))
+inline  IDelegate <typename TP1, typename TP2>  * createDelegate(void(*_func)(TP1 p1, TP2 p2))
 {
-	return new CStaticDelegate2 <typename TP1, typename TP2>(_func);
+	return new CStaticDelegate <typename TP1, typename TP2>(_func);
 }
 template <typename T, typename TP1, typename TP2>
-inline  IDelegate2 <typename TP1, typename TP2>  * createDelegate(T * _object, void (T::*_method)(TP1 p1, TP2 p2))
+inline  IDelegate <typename TP1, typename TP2>  * createDelegate(T * _object, void (T::*_method)(TP1 p1, TP2 p2))
 {
-	return new CMethodDelegate2  <T, TP1, TP2>(_object, _method);
+	return new CMethodDelegate  <T, TP1, TP2>(_object, _method);
 }
 template   <typename TP1, typename TP2>
 class CMultiDelegate
 {
 public:
-	typedef IDelegate2 <typename TP1, typename TP2>  IDelegate;
-	typedef typename std::list<IDelegate*> ListDelegate;
+	typedef IDelegate <typename TP1, typename TP2>  IMyDelegate;
+	typedef typename std::list<IMyDelegate*> ListDelegate;
 	typedef typename ListDelegate::iterator ListDelegateIterator;
 	typedef typename ListDelegate::const_iterator ConstListDelegateIterator;
 	CMultiDelegate() { }
@@ -118,7 +118,7 @@ public:
 			}
 		}
 	}
-	CMultiDelegate  <typename TP1, typename TP2> & operator+=(IDelegate* _delegate)
+	CMultiDelegate  <typename TP1, typename TP2> & operator+=(IMyDelegate* _delegate)
 	{
 		for (ListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
 		{
@@ -131,7 +131,7 @@ public:
 		mListDelegates.push_back(_delegate);
 		return *this;
 	}
-	CMultiDelegate  <typename TP1, typename TP2> & operator-=(IDelegate* _delegate)
+	CMultiDelegate  <typename TP1, typename TP2> & operator-=(IMyDelegate* _delegate)
 	{
 		for (ListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
 		{
