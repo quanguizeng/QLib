@@ -36,6 +36,15 @@
     <ClInclude Include="..\..\UnitTest\GarbageTest.h">
       <Filter>UnitTest</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Common\Delegate.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UnitTest\DelegateTest.h">
+      <Filter>UnitTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UnitTest\UnitTest.h">
+      <Filter>UnitTest</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
