@@ -39,7 +39,7 @@ namespace QLib
 			{
 				return;
 			}
-			m_items.insert(item);
+			mItems.insert(item);
 		}
 
 		inline void remove(C* item)
@@ -48,7 +48,7 @@ namespace QLib
 			{
 				return;
 			}
-			m_items.erase(item);
+			mItems.erase(item);
 		}
 
 		inline void destroy(C* item)
@@ -57,25 +57,25 @@ namespace QLib
 			{
 				return;
 			}
-			m_items.erase(item);
+			mItems.erase(item);
 			delete item;
 		}
 
 		inline int size()
 		{
-			return m_items.size();
+			return mItems.size();
 		}
 
 		~Garbage()
 		{
 			typedef typename set<C*>::iterator iterator;
-			for (iterator it = m_items.begin(); it != m_items.end(); ++it)
+			for (iterator it = mItems.begin(); it != mItems.end(); ++it)
 				delete *it;
-			m_items.clear();
+			mItems.clear();
 		}
 
 	private:
-		set<C*> m_items;
+		set<C*> mItems;
 	};
 
 }
