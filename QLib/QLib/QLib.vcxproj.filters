@@ -45,6 +45,15 @@
     <ClInclude Include="..\..\UnitTest\UnitTest.h">
       <Filter>UnitTest</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Common\Basic.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Tuple.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UnitTest\TupleTest.h">
+      <Filter>UnitTest</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
