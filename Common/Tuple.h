@@ -92,21 +92,29 @@ namespace QLib
 	public:
 		TupleValue()
 		{
-
+			mStringValue = "";
+			mIntValue = 0;
+			mDoubleValue = 0;
 		}
 		TupleValue(string headerName, string value)
 		{
 			mName = headerName;
 			mStringValue = value;
+			mIntValue = 0;
+			mDoubleValue = 0;
 		}
 		TupleValue(string headerName, int value)
 		{
 			mName = headerName;
+			mStringValue = "";
 			mIntValue = value;
+			mDoubleValue = 0;
 		}
 		TupleValue(string headerName, double value)
 		{
 			mName = headerName;
+			mStringValue = "";
+			mIntValue = 0;
 			mDoubleValue = value;
 		}
 		~TupleValue()
@@ -140,11 +148,83 @@ namespace QLib
 		int mIntValue;
 		double mDoubleValue;
 	};
+	class TupleRow
+	{
+	public:
+		typedef map<string, TupleValue>		ListTupleValue;
+		TupleRow()
+		{
+
+		}
+		TupleRow(ListTupleValue &listValue)
+		{
+			mListValue = listValue;
+		}
+		~TupleRow()
+		{
+			mListValue.clear();
+		}
+
+		inline TupleValue operator[](string name)
+		{
+			if (mListValue.find(name) != mListValue.end())
+			{
+				CHECK_ERROR(false, "查询的字段名不存在!");
+			}
+
+			return mListValue[name];
+		}
+
+		inline ListTupleValue &getList()
+		{
+			return mListValue;
+		}
+
+	protected:
+		ListTupleValue mListValue;
+	};
+
+	class Tuple;
+
+	template<typename T>
+	class OrderBy
+	{
+	public:
+		OrderBy()
+		{
+
+		}
+		~OrderBy()
+		{
+		}
+
+		static void insertSortAsc(string sortName, Tuple *pTuple)
+		{
+			TupleHeader *pHeader = pTuple->getHeader(sortName);
+			CHECK_ERROR(pHeader != NULL, "排序字段不存在!");
+
+			vector<T> *pListColumn = (vector<T>*)pTuple->getTable()[sortName];
+
+		};
+
+		static void insertSortDesc(string sortName, Tuple *pTuple)
+		{
+			TupleHeader *pHeader = pTuple->getHeader(sortName);
+			CHECK_ERROR(pHeader != NULL, "排序字段不存在!");
+
+			vector<T> *pListColumn = (vector<T>*)pTuple->getTable()[sortName];
+		};
+
+	};
 
 	class Tuple
 	{
+		friend class OrderBy<double>;
+		friend class OrderBy<int>;
+		friend class OrderBy<string>;
 #define	_DEFAULT_		"_DEFAULT_"
 	public:
+		typedef vector<TupleHeader> ListTupleHeader;
 		typedef	TupleHeader::eType	HeaderType;
 		typedef map<string, void*> TupleTable;
 		typedef function< bool(map<string, TupleValue>&)>	WhereCondition;
@@ -173,7 +253,7 @@ namespace QLib
 			mTupleHeader = tupleHeader;
 
 			addIntList(_DEFAULT_);
-
+			mTupleHeader.push_back(TupleHeader(_DEFAULT_, TupleHeader::eType::_INT));
 			for (iterator it = tupleHeader.begin(); it != tupleHeader.end(); ++it)
 			{
 				TupleHeader &header = *it;
@@ -236,7 +316,7 @@ namespace QLib
 				}
 
 				vector<TupleValue>	listValue;
-				if (mFunc(mapValue))
+				if (mFunc == nullptr || mFunc(mapValue))
 				{
 					for (vector<string>::iterator it = listHeader.begin(); it != listHeader.end(); it++)
 					{
@@ -308,10 +388,44 @@ namespace QLib
 			return true;
 		}
 
-		Tuple* order_by(string headerName)
+		Tuple* order_by(string headerName, string flag)
 		{
+			TupleHeader *pHeader = getHeader(headerName);
+			CHECK_ERROR(pHeader != NULL, "排序字段不存在!");
 
-			return NULL;
+			if (flag == "asc")
+			{
+				// 升序排序
+				if (pHeader->isDouble())
+				{
+					OrderBy<double>::insertSortAsc(headerName, this);
+				}
+				else if (pHeader->isInt())
+				{
+					OrderBy<int>::insertSortAsc(headerName, this);
+				}
+				else if (pHeader->isString())
+				{
+					OrderBy<string>::insertSortAsc(headerName, this);
+				}
+			}
+			else if(flag == "" || flag == "desc")
+			{
+				// 默认降序排序
+				if (pHeader->isDouble())
+				{
+					OrderBy<double>::insertSortDesc(headerName, this);
+				}
+				else if (pHeader->isInt())
+				{
+					OrderBy<int>::insertSortDesc(headerName, this);
+				}
+				else if (pHeader->isString())
+				{
+					OrderBy<string>::insertSortDesc(headerName, this);
+				}
+			}
+			return this;
 		}
 
 		Tuple* where(vector<string> &listHeader, WhereCondition func)
@@ -322,14 +436,115 @@ namespace QLib
 			return this;
 		}
 
-		bool update()
+		bool update(vector<TupleValue> &listTupleValue)
 		{
+			CHECK_ERROR(listTupleValue.size() > 0, "");
+			CHECK_ERROR(checkHeader(listTupleValue) == true, "");
 
+			typedef vector<string>::iterator iterator;
+
+			for (int i = 0; i < getCount(); i++)
+			{
+				map<string, TupleValue> mapValue;
+				if (mFunc != nullptr)
+				{
+					for (vector<string>::iterator itHeader = mListHeader.begin(); itHeader != mListHeader.end(); itHeader++)
+					{
+						TupleHeader *pHeader = getHeader(*itHeader);
+						CHECK_ERROR(pHeader != NULL, "查询的字段不存在");
+						if (pHeader->isDouble())
+						{
+							TupleType::DoubleType *pDoubleField = (TupleType::DoubleType*)mTable[*itHeader];
+							mapValue[*itHeader] = TupleValue(pHeader->getName(), (*pDoubleField)[i]);
+						}
+						else if (pHeader->isInt())
+						{
+							TupleType::IntType *pDoubleField = (TupleType::IntType*)mTable[*itHeader];
+							mapValue[*itHeader] = TupleValue(pHeader->getName(), (*pDoubleField)[i]);
+						}
+						else if (pHeader->isString())
+						{
+							TupleType::StringType *pDoubleField = (TupleType::StringType*)mTable[*itHeader];
+							mapValue[*itHeader] = TupleValue(pHeader->getName(), (*pDoubleField)[i]);
+						}
+					}
+				}
+
+				vector<TupleValue>	listValue;
+				if (mFunc == nullptr || mFunc(mapValue))
+				{
+					for (vector<TupleValue>::iterator it = listTupleValue.begin(); it != listTupleValue.end(); it++)
+					{
+						TupleHeader *pHeader = getHeader((*it).getName());
+						if (pHeader->isDouble())
+						{
+							TupleType::DoubleType *pFiled = (TupleType::DoubleType*)mTable[pHeader->getName()];
+							(*pFiled)[i] = (*it).getDoubleValue();
+						}
+						else if (pHeader->isString())
+						{
+							TupleType::StringType *pFiled = (TupleType::StringType*)mTable[pHeader->getName()];
+							(*pFiled)[i] = (*it).getStringValue();
+						}
+						else if (pHeader->isInt())
+						{
+							TupleType::IntType *pFiled = (TupleType::IntType*)mTable[pHeader->getName()];
+							(*pFiled)[i] = (*it).getIntValue();
+						}
+					}
+				}
+			}
+
+			mFunc = nullptr;
+
+			return true;
 		}
 
 		Tuple* top(int num)
 		{
-			return NULL;
+			CHECK_ERROR(num > 0, "指定获取的数目不对!");
+
+			if (num >= getCount())
+			{
+				return this;
+			}
+
+			for (ListTupleHeader::iterator it = mTupleHeader.begin(); it != mTupleHeader.end(); it++)
+			{
+				TupleHeader *pHeader = &(*it);
+				if (pHeader->isDouble())
+				{
+					TupleType::DoubleType *pFiled = (TupleType::DoubleType*)mTable[pHeader->getName()];
+					TupleType::DoubleType::iterator first = pFiled->begin() + num;
+					TupleType::DoubleType::iterator last = pFiled->end();
+					if (first <= last)
+					{
+						pFiled->erase(first, last);
+					}
+				}
+				else if (pHeader->isString())
+				{
+					TupleType::StringType *pFiled = (TupleType::StringType*)mTable[pHeader->getName()];
+					TupleType::StringType::iterator first = pFiled->begin() + num;
+					TupleType::StringType::iterator last = pFiled->end();
+					if (first <= last)
+					{
+						pFiled->erase(first, last);
+					}
+				}
+				else if (pHeader->isInt())
+				{
+					TupleType::IntType *pFiled = (TupleType::IntType*)mTable[pHeader->getName()];
+					TupleType::IntType::iterator first = pFiled->begin() + num;
+					TupleType::IntType::iterator last = pFiled->end();
+					if (first <= last)
+					{
+						pFiled->erase(first, last);
+					}
+				}
+			}
+
+			return this;
 		}
 
 		Tuple* gruop_by()
@@ -357,7 +572,7 @@ namespace QLib
 
 		inline bool toLast()
 		{
-			mCurrentPointer = mTable.size() - 1 > 0 ? mTable.size() - 1 : 0;
+			mCurrentPointer = end();
 
 			return true;
 		}
@@ -379,13 +594,12 @@ namespace QLib
 		}
 		inline int end()
 		{
-			TupleType::IntType *pList = (TupleType::IntType*)mTable[_DEFAULT_];
-			if (pList == NULL)
+			if (getCount() > 0)
 			{
-				return 0;
+				return getCount() - 1;
 			}
 
-			return pList->size();
+			return 0;
 		}
 
 		TupleValue operator[](string headerName)
@@ -409,7 +623,69 @@ namespace QLib
 			CHECK_ERROR(false, "未知异常");
 		}
 
+		TupleRow operator[](int i)
+		{
+			CHECK_ERROR(i < 0 && i >= getCount(), "查询下标越界!");
+
+			TupleRow tupleRow;
+			TupleRow::ListTupleValue &listValue = tupleRow.getList();
+
+			for (ListTupleHeader::iterator it = mTupleHeader.begin(); it < mTupleHeader.end(); it++)
+			{
+				TupleHeader *pHeader = &(*it);
+				if (pHeader->isDouble())
+				{
+					TupleType::DoubleType *pFiled = (TupleType::DoubleType*)mTable[pHeader->getName()];
+					listValue.insert(pair<string, TupleValue>(pHeader->getName(), TupleValue(pHeader->getName(), (*pFiled)[i])));
+				}
+				else if (pHeader->isString())
+				{
+					TupleType::StringType *pFiled = (TupleType::StringType*)mTable[pHeader->getName()];
+					listValue.insert(pair<string, TupleValue>(pHeader->getName(), TupleValue(pHeader->getName(), (*pFiled)[i])));
+				}
+				else if (pHeader->isInt())
+				{
+					TupleType::IntType *pFiled = (TupleType::IntType*)mTable[pHeader->getName()];
+					listValue.insert(pair<string, TupleValue>(pHeader->getName(), TupleValue(pHeader->getName(), (*pFiled)[i])));
+				}
+			}
+
+			return tupleRow;
+		}
+
 	protected:
+		inline TupleTable& getTable()
+		{
+			return mTable;
+		}
+		bool setRow(int i, TupleRow &row)
+		{
+			CHECK_ERROR(i < 0 && i >= getCount(), "查询下标越界!");
+			TupleRow::ListTupleValue &listValue = row.getList();
+
+			for (ListTupleHeader::iterator it = mTupleHeader.begin(); it < mTupleHeader.end(); it++)
+			{
+				TupleHeader *pHeader = &(*it);
+
+				if (pHeader->isDouble())
+				{
+					TupleType::DoubleType *pFiled = (TupleType::DoubleType*)mTable[pHeader->getName()];
+					(*pFiled)[i] = listValue[pHeader->getName()].getDoubleValue();
+				}
+				else if (pHeader->isString())
+				{
+					TupleType::StringType *pFiled = (TupleType::StringType*)mTable[pHeader->getName()];
+					(*pFiled)[i] = listValue[pHeader->getName()].getStringValue();
+				}
+				else if (pHeader->isInt())
+				{
+					TupleType::IntType *pFiled = (TupleType::IntType*)mTable[pHeader->getName()];
+					(*pFiled)[i] = listValue[pHeader->getName()].getIntValue();
+				}
+			}
+
+			return true;
+		}
 		bool checkHeader(vector<TupleValue> &listValue)
 		{
 			typedef vector<TupleValue>::iterator iterator;
@@ -495,12 +771,13 @@ namespace QLib
 		Garbage<TupleType::DoubleType> mDoubleListGC;
 		Garbage<TupleType::IntType> mIntListGC;
 		Garbage<TupleType::StringType> mStringListGC;
-		vector<TupleHeader>	mTupleHeader;
+		ListTupleHeader	mTupleHeader;
 		WhereCondition mFunc;
 		vector<string> mListHeader;
 
 		int mCurrentPointer;
 	};
+
 }
 
 

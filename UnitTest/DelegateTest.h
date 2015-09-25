@@ -70,9 +70,9 @@ public:
 		}
 		CParam *pParams2 = (CParam*)pParams;
 		CReturn *pReturn2 = (CReturn*)pReturn;
-		pReturn2->mFlag = true;
 		if (pParams2->mMain == mMain && pParams2->mSub == mSub)
 		{
+			pReturn2->mFlag = true;
 			pReturn2->mValue = 100;
 			cout << "CTest1::myFunc" << endl;
 		}
@@ -105,9 +105,9 @@ public:
 		CParam *pParams2 = (CParam*)pParams;
 		CReturn *pReturn2 = (CReturn*)pReturn;
 
-		pReturn2->mFlag = true;
 		if (pParams2->mMain == mMain && pParams2->mSub == mSub)
 		{
+			pReturn2->mFlag = true;
 			pReturn2->mValue = 200;
 			cout << "Test2::myFunc" << endl;
 		}

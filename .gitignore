@@ -65,3 +65,5 @@ QLib/QLib/Debug/QLib.obj
 QLib/QLib/Debug/QLib.log
 *.pdb
 QLib/QLib/Debug/vc120.pdb
+*.log
+QLib/QLib/Debug/QLib.log
