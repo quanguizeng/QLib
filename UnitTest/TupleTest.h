@@ -155,7 +155,29 @@ TEST_CASE(testTuple)
 			assert((*pTuple)["Mobile"].getStringValue() == "222222333");
 
 			gc.add(pTuple);
+		}
 
+		{
+			Garbage<Tuple> gc;
+
+			pTuple = tuple.where(vector<string>({}), nullptr)
+				->select(vector<string>({ "Name", "Age", "Mobile" }));
+			gc.add(pTuple);
+
+			pTuple->where(vector<string>({ "Name" }),
+				[](map<string, TupleValue> &mapCondition){ return mapCondition["Name"].getStringValue() == "BBBB"; })
+				->my_delete();
+
+			assert(pTuple != NULL && pTuple != &tuple);
+			assert(pTuple->getCount() == 2);
+			pTuple->toFirst();
+			assert((*pTuple)["Name"].getStringValue() == "AAA");
+			assert((*pTuple)["Age"].getIntValue() == 25);
+			assert((*pTuple)["Mobile"].getStringValue() == "111111");
+			pTuple->toNext();
+			assert((*pTuple)["Name"].getStringValue() == "CCCC");
+			assert((*pTuple)["Age"].getIntValue() == 30);
+			assert((*pTuple)["Mobile"].getStringValue() == "33333");
 		}
 	}
 

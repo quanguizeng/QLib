@@ -167,10 +167,8 @@ namespace QLib
 
 		inline TupleValue operator[](string name)
 		{
-			if (mListValue.find(name) != mListValue.end())
-			{
-				CHECK_ERROR(false, "查询的字段名不存在!");
-			}
+			CHECK_ERROR(mListValue.find(name) != mListValue.end(), "查询的字段名不存在!");
+
 
 			return mListValue[name];
 		}
@@ -222,7 +220,6 @@ namespace QLib
 		friend class OrderBy<double>;
 		friend class OrderBy<int>;
 		friend class OrderBy<string>;
-#define	_DEFAULT_		"_DEFAULT_"
 	public:
 		typedef vector<TupleHeader> ListTupleHeader;
 		typedef	TupleHeader::eType	HeaderType;
@@ -252,8 +249,6 @@ namespace QLib
 
 			mTupleHeader = tupleHeader;
 
-			addIntList(_DEFAULT_);
-			mTupleHeader.push_back(TupleHeader(_DEFAULT_, TupleHeader::eType::_INT));
 			for (iterator it = tupleHeader.begin(); it != tupleHeader.end(); ++it)
 			{
 				TupleHeader &header = *it;
@@ -355,8 +350,6 @@ namespace QLib
 			{
 				return false;
 			}
-			TupleType::IntType* pList = (TupleType::IntType*)mTable[_DEFAULT_];
-			pList->push_back(0);
 
 			for (iterator it = listValue.begin(); it != listValue.end(); it++)
 			{
@@ -382,8 +375,69 @@ namespace QLib
 			return true;
 		}
 
-		bool myDelete()
+		bool my_delete()
 		{
+			typedef vector<string>::iterator iterator;
+
+			for (int i = 0; i < getCount(); i++)
+			{
+				map<string, TupleValue> mapValue;
+
+				if (mFunc != nullptr)
+				{
+					for (vector<string>::iterator itHeader = mListHeader.begin(); itHeader != mListHeader.end(); itHeader++)
+					{
+						TupleHeader *pHeader = getHeader(*itHeader);
+						CHECK_ERROR(pHeader != NULL, "查询的字段不存在");
+						if (pHeader->isDouble())
+						{
+							TupleType::DoubleType *pDoubleField = (TupleType::DoubleType*)mTable[*itHeader];
+							mapValue[*itHeader] = TupleValue(pHeader->getName(), (*pDoubleField)[i]);
+						}
+						else if (pHeader->isInt())
+						{
+							TupleType::IntType *pDoubleField = (TupleType::IntType*)mTable[*itHeader];
+							mapValue[*itHeader] = TupleValue(pHeader->getName(), (*pDoubleField)[i]);
+						}
+						else if (pHeader->isString())
+						{
+							TupleType::StringType *pDoubleField = (TupleType::StringType*)mTable[*itHeader];
+							mapValue[*itHeader] = TupleValue(pHeader->getName(), (*pDoubleField)[i]);
+						}
+					}
+				}
+
+				if (mFunc == nullptr || mFunc(mapValue))
+				{
+					typedef vector<TupleHeader>::iterator iterator;
+
+					for (iterator it = mTupleHeader.begin(); it != mTupleHeader.end(); ++it)
+					{
+						TupleHeader &header = *it;
+						if (header.isDouble())
+						{
+							TupleType::DoubleType *pFiled = (TupleType::DoubleType*)mTable[(*it).getName()];
+							TupleType::DoubleType::iterator first = pFiled->begin() + i;
+							pFiled->erase(first);
+						}
+						else if (header.isString())
+						{
+							TupleType::StringType *pFiled = (TupleType::StringType*)mTable[(*it).getName()];
+							TupleType::StringType::iterator first = pFiled->begin() + i;
+							pFiled->erase(first);
+						}
+						else if (header.isInt())
+						{
+							TupleType::IntType *pFiled = (TupleType::IntType*)mTable[(*it).getName()];
+							TupleType::IntType::iterator first = pFiled->begin() + i;
+							pFiled->erase(first);
+						}
+					}
+					i--;
+				}
+			}
+
+			mFunc = nullptr;
 
 			return true;
 		}
@@ -438,8 +492,8 @@ namespace QLib
 
 		bool update(vector<TupleValue> &listTupleValue)
 		{
-			CHECK_ERROR(listTupleValue.size() > 0, "");
-			CHECK_ERROR(checkHeader(listTupleValue) == true, "");
+			CHECK_ERROR(listTupleValue.size() > 0, "需要指明更新字段!");
+			CHECK_ERROR(checkHeader(listTupleValue) == true, "存在未知字段!");
 
 			typedef vector<string>::iterator iterator;
 
@@ -554,13 +608,27 @@ namespace QLib
 
 		inline int getCount()
 		{
-			TupleType::IntType *pList = (TupleType::IntType*)mTable[_DEFAULT_];
-			if (pList == NULL)
+			if (mTupleHeader.size() > 0)
 			{
-				return 0;
+				TupleHeader *pHeader = &mTupleHeader[0];
+				if (pHeader->isDouble())
+				{
+					TupleType::DoubleType *pFiled = (TupleType::DoubleType*)mTable[pHeader->getName()];
+					return pFiled->size();
+				}
+				else if (pHeader->isString())
+				{
+					TupleType::StringType *pFiled = (TupleType::StringType*)mTable[pHeader->getName()];
+					return pFiled->size();
+				}
+				else if (pHeader->isInt())
+				{
+					TupleType::IntType *pFiled = (TupleType::IntType*)mTable[pHeader->getName()];
+					return pFiled->size();
+				}
 			}
 
-			return pList->size();
+			return 0;
 		}
 
 		inline bool toFirst()
@@ -579,7 +647,7 @@ namespace QLib
 
 		inline bool toNext()
 		{
-			CHECK_ERROR(mCurrentPointer < mTable.size(), "越界，已经到达最后一行数据");
+			CHECK_ERROR(mCurrentPointer < getCount(), "越界，已经到达最后一行数据");
 			mCurrentPointer++;
 
 			return true;
@@ -777,7 +845,6 @@ namespace QLib
 
 		int mCurrentPointer;
 	};
-
 }
 
 
