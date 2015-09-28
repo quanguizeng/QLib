@@ -43,8 +43,9 @@ namespace QLib
 
 	class TupleHeader
 	{
-		enum eType;
 	public:
+		enum eType;
+
 		TupleHeader(string headerName, eType headerType)
 		{
 			mName = headerName;
@@ -181,7 +182,6 @@ namespace QLib
 	protected:
 		ListTupleValue mListValue;
 	};
-
 	class Tuple;
 
 	template<typename T>
@@ -200,17 +200,50 @@ namespace QLib
 		{
 			TupleHeader *pHeader = pTuple->getHeader(sortName);
 			CHECK_ERROR(pHeader != NULL, "排序字段不存在!");
+			CHECK_ERROR(pTuple != NULL, "");
 
 			vector<T> *pListColumn = (vector<T>*)pTuple->getTable()[sortName];
 
+			for (int i = 1; i < pListColumn->size(); i++)
+			{
+				if ((*pListColumn)[i - 1] >(*pListColumn)[i])
+				{
+					T temp = (*pListColumn)[i];
+					TupleRow rowTemp = (*pTuple)[i];
+					int j = i;
+					while (j > 0 && (*pListColumn)[j - 1] > temp)
+					{
+						pTuple->setRow(j, (*pTuple)[j - 1]);
+						j--;
+					}
+					pTuple->setRow(j, rowTemp);
+				}
+			}
 		};
 
 		static void insertSortDesc(string sortName, Tuple *pTuple)
 		{
 			TupleHeader *pHeader = pTuple->getHeader(sortName);
 			CHECK_ERROR(pHeader != NULL, "排序字段不存在!");
+			CHECK_ERROR(pTuple != NULL, "");
 
 			vector<T> *pListColumn = (vector<T>*)pTuple->getTable()[sortName];
+
+			for (int i = 1; i < pListColumn->size(); i++)
+			{
+				if ((*pListColumn)[i - 1] < (*pListColumn)[i])
+				{
+					T temp = (*pListColumn)[i];
+					TupleRow rowTemp = (*pTuple)[i];
+					int j = i;
+					while (j > 0 && (*pListColumn)[j - 1] < temp)
+					{
+						pTuple->setRow(j, (*pTuple)[j - 1]);
+						j--;
+					}
+					pTuple->setRow(j, rowTemp);
+				}
+			}
 		};
 
 	};
@@ -225,6 +258,8 @@ namespace QLib
 		typedef	TupleHeader::eType	HeaderType;
 		typedef map<string, void*> TupleTable;
 		typedef function< bool(map<string, TupleValue>&)>	WhereCondition;
+		typedef function<bool(map<string, vector<TupleValue>>&)> OrderCondition;
+
 		class TupleType
 		{
 		public:
@@ -463,7 +498,7 @@ namespace QLib
 					OrderBy<string>::insertSortAsc(headerName, this);
 				}
 			}
-			else if(flag == "" || flag == "desc")
+			else if (flag == "" || flag == "desc")
 			{
 				// 默认降序排序
 				if (pHeader->isDouble())
@@ -693,7 +728,7 @@ namespace QLib
 
 		TupleRow operator[](int i)
 		{
-			CHECK_ERROR(i < 0 && i >= getCount(), "查询下标越界!");
+			CHECK_ERROR(i >= 0 && i < getCount(), "查询下标越界!");
 
 			TupleRow tupleRow;
 			TupleRow::ListTupleValue &listValue = tupleRow.getList();
@@ -728,7 +763,7 @@ namespace QLib
 		}
 		bool setRow(int i, TupleRow &row)
 		{
-			CHECK_ERROR(i < 0 && i >= getCount(), "查询下标越界!");
+			CHECK_ERROR(i >= 0 && i < getCount(), "查询下标越界!");
 			TupleRow::ListTupleValue &listValue = row.getList();
 
 			for (ListTupleHeader::iterator it = mTupleHeader.begin(); it < mTupleHeader.end(); it++)
