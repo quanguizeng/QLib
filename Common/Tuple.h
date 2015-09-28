@@ -248,11 +248,54 @@ namespace QLib
 
 	};
 
+	template<typename T>
+	class GruopBy
+	{
+	public:
+		GruopBy()
+		{
+			
+		}
+		~GruopBy()
+		{
+
+		}
+
+		static void insertSort(string sortName, Tuple *pTuple)
+		{
+			TupleHeader *pHeader = pTuple->getHeader(sortName);
+			CHECK_ERROR(pHeader != NULL, "排序字段不存在!");
+			CHECK_ERROR(pTuple != NULL, "");
+
+			vector<T> *pListColumn = (vector<T>*)pTuple->getTable()[sortName];
+
+			for (int i = 1; i < pListColumn->size(); i++)
+			{
+				if ((*pListColumn)[i - 1] >(*pListColumn)[i])
+				{
+					T temp = (*pListColumn)[i];
+					TupleRow rowTemp = (*pTuple)[i];
+					int j = i;
+					while (j > 0 && (*pListColumn)[j - 1] > temp)
+					{
+						pTuple->setRow(j, (*pTuple)[j - 1]);
+						j--;
+					}
+					pTuple->setRow(j, rowTemp);
+				}
+			}
+		}
+	};
+
+
 	class Tuple
 	{
 		friend class OrderBy<double>;
 		friend class OrderBy<int>;
 		friend class OrderBy<string>;
+		friend class GruopBy<double>;
+		friend class GruopBy<int>;
+		friend class GruopBy<string>;
 	public:
 		typedef vector<TupleHeader> ListTupleHeader;
 		typedef	TupleHeader::eType	HeaderType;
@@ -636,9 +679,25 @@ namespace QLib
 			return this;
 		}
 
-		Tuple* gruop_by()
+		Tuple* gruop_by(string headerName)
 		{
-			return NULL;
+			TupleHeader *pHeader = getHeader(headerName);
+			CHECK_ERROR(pHeader != NULL, "分组字段不存在!");
+
+			if (pHeader->isDouble())
+			{
+				GruopBy<double>::insertSort(headerName, this);
+			}
+			else if (pHeader->isInt())
+			{
+				GruopBy<int>::insertSort(headerName, this);
+			}
+			else if (pHeader->isString())
+			{
+				GruopBy<string>::insertSort(headerName, this);
+			}
+
+			return this;
 		}
 
 		inline int getCount()

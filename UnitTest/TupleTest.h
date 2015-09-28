@@ -217,7 +217,6 @@ TEST_CASE(testTuple)
 			assert((*pTuple)["Name"].getStringValue() == "CCCC");
 			assert((*pTuple)["Age"].getIntValue() == 30);
 			assert((*pTuple)["Mobile"].getStringValue() == "33333");
-
 		}
 
 		{
@@ -225,7 +224,7 @@ TEST_CASE(testTuple)
 
 			pTuple = tuple.where(vector<string>({}), nullptr)
 				->select(vector<string>({ "Name", "Age", "Mobile" }))
-				->order_by("Age", "desc");
+				->order_by("Name", "desc");
 
 			gc.add(pTuple);
 
@@ -236,14 +235,99 @@ TEST_CASE(testTuple)
 			assert((*pTuple)["Age"].getIntValue() == 30);
 			assert((*pTuple)["Mobile"].getStringValue() == "33333");
 			pTuple->toNext();
+			assert((*pTuple)["Name"].getStringValue() == "BBBB");
+			assert((*pTuple)["Age"].getIntValue() == 23);
+			assert((*pTuple)["Mobile"].getStringValue() == "222222");
+			pTuple->toNext();
+			assert((*pTuple)["Name"].getStringValue() == "AAA");
+			assert((*pTuple)["Age"].getIntValue() == 25);
+			assert((*pTuple)["Mobile"].getStringValue() == "111111");
+		}
+	}
+	{
+		Tuple tuple;
+		vector<TupleHeader> tupleHeader = { TupleHeader("Name", TupleHeader::eType::_STRING),
+			TupleHeader("Age", TupleHeader::eType::_INT),
+			TupleHeader("Mobile", TupleHeader::eType::_STRING) };
+		vector<Person> person = { Person("AAA", 25, "111111"),
+			Person("BBBB", 23, "222222"),
+			Person("CCCC", 30, "33333"),
+			Person("DDDDD", 23, "234234234"),
+			Person("EEEEE", 30, "3323423423333")
+		};
+
+		{
+			tuple.create(tupleHeader);
+
+			for (vector<Person>::iterator i = person.begin(); i != person.end(); i++)
+			{
+				vector<TupleValue> tupleListValue = { TupleValue(tupleHeader[0].getName(), (*i).mName),
+					TupleValue(tupleHeader[1].getName(), (*i).mAge),
+					TupleValue(tupleHeader[2].getName(), (*i).mMobile)
+				};
+				tuple.insert(tupleListValue);
+			}
+		}
+
+		Tuple *pTuple = NULL;
+		{
+			Garbage<Tuple> gc;
+
+			pTuple = tuple.where(vector<string>({}), nullptr)
+				->select(vector<string>({ "Name", "Age", "Mobile" }))
+				->gruop_by("Age");
+
+			gc.add(pTuple);
+
+			assert(pTuple != NULL && pTuple != &tuple);
+			assert(pTuple->getCount() == 5);
+			pTuple->toFirst();
+			assert((*pTuple)["Name"].getStringValue() == "BBBB");
+			assert((*pTuple)["Age"].getIntValue() == 23);
+			assert((*pTuple)["Mobile"].getStringValue() == "222222");
+			pTuple->toNext();
+			assert((*pTuple)["Name"].getStringValue() == "DDDDD");
+			assert((*pTuple)["Age"].getIntValue() == 23);
+			assert((*pTuple)["Mobile"].getStringValue() == "234234234");
+			pTuple->toNext();
 			assert((*pTuple)["Name"].getStringValue() == "AAA");
 			assert((*pTuple)["Age"].getIntValue() == 25);
 			assert((*pTuple)["Mobile"].getStringValue() == "111111");
 			pTuple->toNext();
+			assert((*pTuple)["Name"].getStringValue() == "CCCC");
+			assert((*pTuple)["Age"].getIntValue() == 30);
+			assert((*pTuple)["Mobile"].getStringValue() == "33333");
+			pTuple->toNext();
+			assert((*pTuple)["Name"].getStringValue() == "EEEEE");
+			assert((*pTuple)["Age"].getIntValue() == 30);
+			assert((*pTuple)["Mobile"].getStringValue() == "3323423423333");
+		}
+		{
+			Garbage<Tuple> gc;
+
+			pTuple = tuple.where(vector<string>({ "Age" }),
+				[](map<string, TupleValue> &mapCondition){ return mapCondition["Age"].getIntValue() < 30; })
+				->select(vector<string>({ "Name", "Age", "Mobile" }))
+				->gruop_by("Age");
+
+			gc.add(pTuple);
+
+			assert(pTuple != NULL && pTuple != &tuple);
+			assert(pTuple->getCount() == 3);
+			pTuple->toFirst();
 			assert((*pTuple)["Name"].getStringValue() == "BBBB");
 			assert((*pTuple)["Age"].getIntValue() == 23);
 			assert((*pTuple)["Mobile"].getStringValue() == "222222");
+			pTuple->toNext();
+			assert((*pTuple)["Name"].getStringValue() == "DDDDD");
+			assert((*pTuple)["Age"].getIntValue() == 23);
+			assert((*pTuple)["Mobile"].getStringValue() == "234234234");
+			pTuple->toNext();
+			assert((*pTuple)["Name"].getStringValue() == "AAA");
+			assert((*pTuple)["Age"].getIntValue() == 25);
+			assert((*pTuple)["Mobile"].getStringValue() == "111111");
 		}
+
 	}
 }
 
