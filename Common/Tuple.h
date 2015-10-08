@@ -1,7 +1,7 @@
-
+ï»¿
 //##########################################################################
 //Qlib 1.0
-//¿ª·¢Õß:ÔøÈ«¹ó
+//å¼€å‘è€…:æ›¾å…¨è´µ
 //##########################################################################
 
 /*
@@ -149,6 +149,7 @@ namespace QLib
 		int mIntValue;
 		double mDoubleValue;
 	};
+
 	class TupleRow
 	{
 	public:
@@ -168,7 +169,7 @@ namespace QLib
 
 		inline TupleValue operator[](string name)
 		{
-			CHECK_ERROR(mListValue.find(name) != mListValue.end(), "²éÑ¯µÄ×Ö¶ÎÃû²»´æÔÚ!");
+			CHECK_ERROR(mListValue.find(name) != mListValue.end(), "æŸ¥è¯¢çš„å­—æ®µåä¸å­˜åœ¨!");
 
 
 			return mListValue[name];
@@ -199,7 +200,7 @@ namespace QLib
 		static void insertSortAsc(string sortName, Tuple *pTuple)
 		{
 			TupleHeader *pHeader = pTuple->getHeader(sortName);
-			CHECK_ERROR(pHeader != NULL, "ÅÅĞò×Ö¶Î²»´æÔÚ!");
+			CHECK_ERROR(pHeader != NULL, "æ’åºå­—æ®µä¸å­˜åœ¨!");
 			CHECK_ERROR(pTuple != NULL, "");
 
 			vector<T> *pListColumn = (vector<T>*)pTuple->getTable()[sortName];
@@ -224,7 +225,7 @@ namespace QLib
 		static void insertSortDesc(string sortName, Tuple *pTuple)
 		{
 			TupleHeader *pHeader = pTuple->getHeader(sortName);
-			CHECK_ERROR(pHeader != NULL, "ÅÅĞò×Ö¶Î²»´æÔÚ!");
+			CHECK_ERROR(pHeader != NULL, "æ’åºå­—æ®µä¸å­˜åœ¨!");
 			CHECK_ERROR(pTuple != NULL, "");
 
 			vector<T> *pListColumn = (vector<T>*)pTuple->getTable()[sortName];
@@ -264,7 +265,7 @@ namespace QLib
 		static void insertSort(string sortName, Tuple *pTuple)
 		{
 			TupleHeader *pHeader = pTuple->getHeader(sortName);
-			CHECK_ERROR(pHeader != NULL, "ÅÅĞò×Ö¶Î²»´æÔÚ!");
+			CHECK_ERROR(pHeader != NULL, "æ’åºå­—æ®µä¸å­˜åœ¨!");
 			CHECK_ERROR(pTuple != NULL, "");
 
 			vector<T> *pListColumn = (vector<T>*)pTuple->getTable()[sortName];
@@ -369,7 +370,7 @@ namespace QLib
 					for (vector<string>::iterator itHeader = mListHeader.begin(); itHeader != mListHeader.end(); itHeader++)
 					{
 						TupleHeader *pHeader = getHeader(*itHeader);
-						CHECK_ERROR(pHeader != NULL, "²éÑ¯µÄ×Ö¶Î²»´æÔÚ");
+						CHECK_ERROR(pHeader != NULL, "æŸ¥è¯¢çš„å­—æ®µä¸å­˜åœ¨");
 						if (pHeader->isDouble())
 						{
 							TupleType::DoubleType *pDoubleField = (TupleType::DoubleType*)mTable[*itHeader];
@@ -466,7 +467,7 @@ namespace QLib
 					for (vector<string>::iterator itHeader = mListHeader.begin(); itHeader != mListHeader.end(); itHeader++)
 					{
 						TupleHeader *pHeader = getHeader(*itHeader);
-						CHECK_ERROR(pHeader != NULL, "²éÑ¯µÄ×Ö¶Î²»´æÔÚ");
+						CHECK_ERROR(pHeader != NULL, "æŸ¥è¯¢çš„å­—æ®µä¸å­˜åœ¨");
 						if (pHeader->isDouble())
 						{
 							TupleType::DoubleType *pDoubleField = (TupleType::DoubleType*)mTable[*itHeader];
@@ -523,11 +524,11 @@ namespace QLib
 		Tuple* order_by(string headerName, string flag)
 		{
 			TupleHeader *pHeader = getHeader(headerName);
-			CHECK_ERROR(pHeader != NULL, "ÅÅĞò×Ö¶Î²»´æÔÚ!");
+			CHECK_ERROR(pHeader != NULL, "æ’åºå­—æ®µä¸å­˜åœ¨!");
 
 			if (flag == "asc")
 			{
-				// ÉıĞòÅÅĞò
+				// å‡åºæ’åº
 				if (pHeader->isDouble())
 				{
 					OrderBy<double>::insertSortAsc(headerName, this);
@@ -543,7 +544,7 @@ namespace QLib
 			}
 			else if (flag == "" || flag == "desc")
 			{
-				// Ä¬ÈÏ½µĞòÅÅĞò
+				// é»˜è®¤é™åºæ’åº
 				if (pHeader->isDouble())
 				{
 					OrderBy<double>::insertSortDesc(headerName, this);
@@ -570,8 +571,8 @@ namespace QLib
 
 		bool update(vector<TupleValue> &listTupleValue)
 		{
-			CHECK_ERROR(listTupleValue.size() > 0, "ĞèÒªÖ¸Ã÷¸üĞÂ×Ö¶Î!");
-			CHECK_ERROR(checkHeader(listTupleValue) == true, "´æÔÚÎ´Öª×Ö¶Î!");
+			CHECK_ERROR(listTupleValue.size() > 0, "éœ€è¦æŒ‡æ˜æ›´æ–°å­—æ®µ!");
+			CHECK_ERROR(checkHeader(listTupleValue) == true, "å­˜åœ¨æœªçŸ¥å­—æ®µ!");
 
 			typedef vector<string>::iterator iterator;
 
@@ -583,7 +584,7 @@ namespace QLib
 					for (vector<string>::iterator itHeader = mListHeader.begin(); itHeader != mListHeader.end(); itHeader++)
 					{
 						TupleHeader *pHeader = getHeader(*itHeader);
-						CHECK_ERROR(pHeader != NULL, "²éÑ¯µÄ×Ö¶Î²»´æÔÚ");
+						CHECK_ERROR(pHeader != NULL, "æŸ¥è¯¢çš„å­—æ®µä¸å­˜åœ¨");
 						if (pHeader->isDouble())
 						{
 							TupleType::DoubleType *pDoubleField = (TupleType::DoubleType*)mTable[*itHeader];
@@ -634,7 +635,7 @@ namespace QLib
 
 		Tuple* top(int num)
 		{
-			CHECK_ERROR(num > 0, "Ö¸¶¨»ñÈ¡µÄÊıÄ¿²»¶Ô!");
+			CHECK_ERROR(num > 0, "æŒ‡å®šè·å–çš„æ•°ç›®ä¸å¯¹!");
 
 			if (num >= getCount())
 			{
@@ -679,10 +680,10 @@ namespace QLib
 			return this;
 		}
 
-		Tuple* gruop_by(string headerName)
+		Tuple* group_by(string headerName)
 		{
 			TupleHeader *pHeader = getHeader(headerName);
-			CHECK_ERROR(pHeader != NULL, "·Ö×é×Ö¶Î²»´æÔÚ!");
+			CHECK_ERROR(pHeader != NULL, "åˆ†ç»„å­—æ®µä¸å­˜åœ¨!");
 
 			if (pHeader->isDouble())
 			{
@@ -741,7 +742,7 @@ namespace QLib
 
 		inline bool toNext()
 		{
-			CHECK_ERROR(mCurrentPointer < getCount(), "Ô½½ç£¬ÒÑ¾­µ½´ï×îºóÒ»ĞĞÊı¾İ");
+			CHECK_ERROR(mCurrentPointer < getCount(), "è¶Šç•Œï¼Œå·²ç»åˆ°è¾¾æœ€åä¸€è¡Œæ•°æ®");
 			mCurrentPointer++;
 
 			return true;
@@ -767,7 +768,7 @@ namespace QLib
 		TupleValue operator[](string headerName)
 		{
 			TupleHeader* pHeader = getHeader(headerName);
-			CHECK_ERROR(pHeader != NULL, "×Ö¶Î"+headerName+"²»´æÔÚ");
+			CHECK_ERROR(pHeader != NULL, "å­—æ®µ"+headerName+"ä¸å­˜åœ¨");
 
 			if (pHeader->isDouble())
 			{
@@ -782,12 +783,12 @@ namespace QLib
 				return TupleValue(headerName, (*(TupleType::StringType*)mTable[headerName])[mCurrentPointer]);
 			}
 
-			CHECK_ERROR(false, "Î´ÖªÒì³£");
+			CHECK_ERROR(false, "æœªçŸ¥å¼‚å¸¸");
 		}
 
 		TupleRow operator[](int i)
 		{
-			CHECK_ERROR(i >= 0 && i < getCount(), "²éÑ¯ÏÂ±êÔ½½ç!");
+			CHECK_ERROR(i >= 0 && i < getCount(), "æŸ¥è¯¢ä¸‹æ ‡è¶Šç•Œ!");
 
 			TupleRow tupleRow;
 			TupleRow::ListTupleValue &listValue = tupleRow.getList();
@@ -822,7 +823,7 @@ namespace QLib
 		}
 		bool setRow(int i, TupleRow &row)
 		{
-			CHECK_ERROR(i >= 0 && i < getCount(), "²éÑ¯ÏÂ±êÔ½½ç!");
+			CHECK_ERROR(i >= 0 && i < getCount(), "æŸ¥è¯¢ä¸‹æ ‡è¶Šç•Œ!");
 			TupleRow::ListTupleValue &listValue = row.getList();
 
 			for (ListTupleHeader::iterator it = mTupleHeader.begin(); it < mTupleHeader.end(); it++)

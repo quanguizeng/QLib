@@ -1,4 +1,4 @@
-
+﻿
 #ifndef QLIB_BASIC
 #define QLIB_BASIC
 

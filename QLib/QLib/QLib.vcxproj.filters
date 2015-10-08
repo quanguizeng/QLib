@@ -13,11 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="common">
-      <UniqueIdentifier>{e936ec73-d3df-4861-8d7b-29bdf9598984}</UniqueIdentifier>
-    </Filter>
     <Filter Include="UnitTest">
       <UniqueIdentifier>{913904bc-2eea-4a88-be0b-2165d982e2ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{e936ec73-d3df-4861-8d7b-29bdf9598984}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,13 +31,13 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\Garbage.h">
-      <Filter>common</Filter>
+      <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\UnitTest\GarbageTest.h">
       <Filter>UnitTest</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Common\Delegate.h">
-      <Filter>common</Filter>
+      <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\UnitTest\DelegateTest.h">
       <Filter>UnitTest</Filter>
@@ -46,12 +46,18 @@
       <Filter>UnitTest</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Common\Basic.h">
-      <Filter>common</Filter>
+      <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Common\Tuple.h">
-      <Filter>common</Filter>
+      <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\UnitTest\TupleTest.h">
+      <Filter>UnitTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Reflection.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UnitTest\ReflectionTest.h">
       <Filter>UnitTest</Filter>
     </ClInclude>
   </ItemGroup>
@@ -61,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="QLib.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\Reflection.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

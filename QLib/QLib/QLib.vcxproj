@@ -85,15 +85,20 @@
     <ClInclude Include="..\..\Common\Basic.h" />
     <ClInclude Include="..\..\Common\Delegate.h" />
     <ClInclude Include="..\..\common\Garbage.h" />
+    <ClInclude Include="..\..\Common\Reflection.h" />
     <ClInclude Include="..\..\Common\Tuple.h" />
     <ClInclude Include="..\..\UnitTest\DelegateTest.h" />
     <ClInclude Include="..\..\UnitTest\GarbageTest.h" />
+    <ClInclude Include="..\..\UnitTest\ReflectionTest.h" />
     <ClInclude Include="..\..\UnitTest\TupleTest.h" />
     <ClInclude Include="..\..\UnitTest\UnitTest.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Common\Reflection.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="QLib.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

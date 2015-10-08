@@ -275,7 +275,7 @@ TEST_CASE(testTuple)
 
 			pTuple = tuple.where(vector<string>({}), nullptr)
 				->select(vector<string>({ "Name", "Age", "Mobile" }))
-				->gruop_by("Age");
+				->group_by("Age");
 
 			gc.add(pTuple);
 
@@ -308,7 +308,7 @@ TEST_CASE(testTuple)
 			pTuple = tuple.where(vector<string>({ "Age" }),
 				[](map<string, TupleValue> &mapCondition){ return mapCondition["Age"].getIntValue() < 30; })
 				->select(vector<string>({ "Name", "Age", "Mobile" }))
-				->gruop_by("Age");
+				->group_by("Age");
 
 			gc.add(pTuple);
 
