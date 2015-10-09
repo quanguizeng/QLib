@@ -1,4 +1,9 @@
-﻿#ifndef QLIB_REFLECTION
+﻿//##########################################################################
+//Qlib 1.0
+//开发者:曾全贵
+//##########################################################################
+
+#ifndef QLIB_REFLECTION
 #define QLIB_REFLECTION
 
 #include <string>    
@@ -11,10 +16,10 @@ namespace QLib
 {
 #define ClassFactoryInstance() ClassFactory::getInstance()
 #define DEFINE_DYNAMIC_CREATE(ClassName) \
-	static Register<ClassName> mMy##ClassName;
+	static RegistyClass<ClassName> mMy##ClassName;
 
 #define IMPLIMENT_DYNAMIC_CREATE(ClassName) \
-	Register<ClassName> mMy##ClassName;
+	RegistyClass<ClassName> mMy##ClassName;
 
 	typedef void* (*CreateFuntion)(void);
 
@@ -66,29 +71,21 @@ namespace QLib
 		static ClassFactory *mInstance;
 	};
 
+	template<typename T>
 	class RegistyClass
 	{
 	public:
-		RegistyClass(string name, CreateFuntion method)
+		RegistyClass()
 		{
-			ClassFactoryInstance()->registClass(name, method);
+			ClassFactoryInstance()->registClass(string(typeid(T).name()).substr(6), RegistyClass<T>::createInstance);
 		}
-	};
-
-	template<typename T>
-	class Register
-	{
-	public:
-		Register()
-		{
-			RegistyClass registyClass(string(typeid(T).name()).substr(6), Register<T>::createInstance);
-		}
-
 		static void* createInstance()
 		{
 			return new T;
 		}
 	};
+
+
 }
 
 #endif

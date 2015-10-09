@@ -4,23 +4,6 @@
 //开发者:曾全贵
 //##########################################################################
 
-/*
-This file is part of Qlib.
-
-Qlib is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Qlib is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with Qlib.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 
 #ifndef QLIB_TUPLE
 #define QLIB_TUPLE
@@ -40,7 +23,6 @@ using namespace std;
 
 namespace QLib
 {
-
 	class TupleHeader
 	{
 	public:

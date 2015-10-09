@@ -9,7 +9,6 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-
 	_CrtDumpMemoryLeaks();
 	return 0;
 }
