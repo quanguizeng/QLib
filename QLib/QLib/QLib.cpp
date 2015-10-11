@@ -9,6 +9,10 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	{
+		Garbage<ClassFactory> classFactoryGC(ClassFactoryInstance());
+	}
+
 	_CrtDumpMemoryLeaks();
 	return 0;
 }
