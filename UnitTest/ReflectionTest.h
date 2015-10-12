@@ -46,12 +46,13 @@ public:
 
 	void registProperty()
 	{
-		getPropertyList().insert(pair<string, setMemberValue>(string("setmX"), TestClass2::setmX));
-		getPropertyList().insert(pair<string, setMemberValue>(string("setmY"), TestClass2::setmY));
-		getPropertyList().insert(pair<string, setMemberValue>(string("setmName"), TestClass2::setmName));
-		getPropertyList().insert(pair<string, setMemberValue>(string("getmX"), TestClass2::getmX));
-		getPropertyList().insert(pair<string, setMemberValue>(string("getmY"), TestClass2::getmY));
-		getPropertyList().insert(pair<string, setMemberValue>(string("getmName"), TestClass2::getmName));
+		ADD_SET_MEMBER_INTERFACE(TestClass2, this, mX);
+		ADD_SET_MEMBER_INTERFACE(TestClass2, this, mY);
+		ADD_SET_MEMBER_INTERFACE(TestClass2, this, mName);
+
+		ADD_GET_MEMBER_INTERFACE(TestClass2, this, mX);
+		ADD_GET_MEMBER_INTERFACE(TestClass2, this, mY);
+		ADD_GET_MEMBER_INTERFACE(TestClass2, this, mName);
 	}
 
 	int mX;
@@ -73,17 +74,18 @@ TEST_CASE(testMemberValue)
 		int x = 100;
 		int y = 200;
 		string name = "AAAAA";
-		pTestClass2->getPropertyList()["setmX"](pTestClass2, &x);
-		pTestClass2->getPropertyList()["setmY"](pTestClass2, &y);
-		pTestClass2->getPropertyList()["setmName"](pTestClass2, &name);
+
+		pTestClass2->setMemberValue(SET_MEMBER_VALUE(pTestClass2, mX, x));
+		pTestClass2->setMemberValue(SET_MEMBER_VALUE(pTestClass2, mY, y));
+		pTestClass2->setMemberValue(SET_MEMBER_VALUE(pTestClass2, mName, name));
 
 		int myX;
 		int myY;
 		string myName;
 
-		pTestClass2->getPropertyList()["getmX"](pTestClass2, &myX);
-		pTestClass2->getPropertyList()["getmY"](pTestClass2, &myY);
-		pTestClass2->getPropertyList()["getmName"](pTestClass2, &myName);
+		pTestClass2->getMemberValue(GET_MEMBER_VALUE(pTestClass2, myX, mX));
+		pTestClass2->getMemberValue(GET_MEMBER_VALUE(pTestClass2, myY, mY));
+		pTestClass2->getMemberValue(GET_MEMBER_VALUE(pTestClass2, myName, mName));
 
 		assert(myX == 100);
 		assert(myY == 200);

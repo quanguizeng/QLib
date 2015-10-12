@@ -86,22 +86,113 @@ namespace QLib
 		}
 	};
 
+	static string removeSpace(string str)
+	{
+		int begin = 0;
+		begin = str.find(" ", begin);
+		while (begin != -1)
+		{
+			str.replace(begin, 1, "");
+			begin = str.find(" ", begin);
+		}
+		return str;
+	}
+
 	class MmemberBase;
-	typedef void(*setMemberValue)(MmemberBase *pObject, void*);
-	typedef map<string, setMemberValue> SetMemberList;
+	typedef void(*PropertyInterface)(MmemberBase *pObject, void*);
+	typedef map<string, PropertyInterface> SetMemberList;
+
+#define SET_MEMEBER_NAME(Object, Name)	removeSpace((string("set")+typeid(Object->Name).name()+string(#Name)))
+#define GET_MEMEBER_NAME(Object, Name)	removeSpace((string("get")+typeid(Object->Name).name()+string(#Name)))
+#define SET_MEMBER_INTERFACE(Class, Name)	Class::set##Name
+#define GET_MEMBER_INTERFACE(Class, Name)	Class::get##Name
+#define ADD_SET_MEMBER_INTERFACE(Class, Object, Variable) addSetMemberInterface(SET_MEMEBER_NAME(Object, Variable), SET_MEMBER_INTERFACE(Class, Variable))
+#define ADD_GET_MEMBER_INTERFACE(Class, Object, Variable) addGetMemberInterface(GET_MEMEBER_NAME(Object, Variable), GET_MEMBER_INTERFACE(Class, Variable))
+#define SET_MEMBER_VALUE(Object, VarLeft, VarRight) SET_MEMEBER_NAME(Object, VarLeft), Object, &VarRight
+#define GET_MEMBER_VALUE(Object, VarLeft, VarRight) GET_MEMEBER_NAME(Object, VarRight), Object, &VarLeft
 
 	class MmemberBase
 	{
+			typedef SetMemberList::const_iterator PropertyIterator;
 	public:
-		MmemberBase() {}
-		virtual ~MmemberBase() {}
+		MmemberBase() 
+		{
+			mGetListProperty.clear();
+			mSetListProperty.clear();
+		}
+		virtual ~MmemberBase() 
+		{
+			mGetListProperty.clear();
+			mSetListProperty.clear();
+		}
 		virtual void registProperty() = NULL;
 		inline SetMemberList &getPropertyList()
 		{
-			return mListProperty;
+			return mGetListProperty;
+		}
+		inline SetMemberList &setPropertyList()
+		{
+			return mSetListProperty;
 		}
 
-		SetMemberList mListProperty;
+		inline bool addSetMemberInterface(string memberName, PropertyInterface memberInterface)
+		{
+			PropertyIterator it = mSetListProperty.find(memberName);
+			if (it != mSetListProperty.end())
+			{
+				return false;
+			}
+			mSetListProperty.insert(pair<string, PropertyInterface>(memberName, memberInterface));
+
+			return true;
+		}
+
+		inline bool addGetMemberInterface(string memberName, PropertyInterface memberInterface)
+		{
+			PropertyIterator it = mGetListProperty.find(memberName);
+			if (it != mGetListProperty.end())
+			{
+				return false;
+			}
+			mGetListProperty.insert(pair<string, PropertyInterface>(memberName, memberInterface));
+
+			return true;
+		}
+
+		inline bool getMemberValue(string memberName, MmemberBase *pBase, void* pValue)
+		{
+			if (pBase == nullptr || pValue == nullptr)
+			{
+				return false;
+			}
+			PropertyIterator it = mGetListProperty.find(memberName);
+			if (it == mGetListProperty.end())
+			{
+				return false;
+			}
+			mGetListProperty[memberName](pBase, pValue);
+
+			return true;
+		}
+
+		inline bool setMemberValue(string memberName, MmemberBase *pBase, void* pValue)
+		{
+			if (pBase == nullptr || pValue == nullptr)
+			{
+				return false;
+			}
+			PropertyIterator it = mSetListProperty.find(memberName);
+			if (it == mSetListProperty.end())
+			{
+				return false;
+			}
+			mSetListProperty[memberName](pBase, pValue);
+
+			return true;
+		}
+
+		SetMemberList mSetListProperty;
+		SetMemberList mGetListProperty;
 	};
 
 #define MEMBER_INTERFACE(ClassType, VarType, VarName)    \
@@ -117,8 +208,6 @@ public:                                       \
 	    VarType* pLeft = (VarType*)pValue;      \
 		*pLeft = pSub->VarName;          \
 	}
-
-
 }
 
 #endif
