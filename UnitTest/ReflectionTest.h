@@ -39,6 +39,7 @@ class TestClass2 :public MmemberBase
 public:
 	TestClass2()
 	{
+		registProperty();
 	}
 	~TestClass2()
 	{
@@ -69,27 +70,25 @@ TEST_CASE(testMemberValue)
 
 		testGC.add(pTestClass2);
 
-		pTestClass2->registProperty();
-
 		int x = 100;
 		int y = 200;
 		string name = "AAAAA";
 
-		pTestClass2->setMemberValue(SET_MEMBER_VALUE(pTestClass2, mX, x));
-		pTestClass2->setMemberValue(SET_MEMBER_VALUE(pTestClass2, mY, y));
-		pTestClass2->setMemberValue(SET_MEMBER_VALUE(pTestClass2, mName, name));
+		SET_MEMBER_VALUE(pTestClass2, mX, x);
+		SET_MEMBER_VALUE(pTestClass2, mY, y);
+		SET_MEMBER_VALUE(pTestClass2, mName, name);
 
 		int myX;
 		int myY;
 		string myName;
 
-		pTestClass2->getMemberValue(GET_MEMBER_VALUE(pTestClass2, myX, mX));
-		pTestClass2->getMemberValue(GET_MEMBER_VALUE(pTestClass2, myY, mY));
-		pTestClass2->getMemberValue(GET_MEMBER_VALUE(pTestClass2, myName, mName));
+		GET_MEMBER_VALUE(pTestClass2, myX, mX);
+		GET_MEMBER_VALUE(pTestClass2, myY, mY);
+		GET_MEMBER_VALUE(pTestClass2, myName, mName);
 
 		assert(myX == 100);
 		assert(myY == 200);
-		assert(myName == name);
+		assert(myName == "AAAAA");
 	}
 }
 
