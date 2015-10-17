@@ -6,6 +6,7 @@
 #include "../../UnitTest/DelegateTest.h"
 #include "../../UnitTest/TupleTest.h"
 #include "../../UnitTest/ReflectionTest.h"
+#include "../../UnitTest/MemoryStreamTest.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {

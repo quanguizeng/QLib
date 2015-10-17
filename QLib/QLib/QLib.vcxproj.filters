@@ -19,6 +19,9 @@
     <Filter Include="Common">
       <UniqueIdentifier>{e936ec73-d3df-4861-8d7b-29bdf9598984}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Stream">
+      <UniqueIdentifier>{2c48bbf1-82b4-4e76-ba00-066da6479f89}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -56,6 +59,15 @@
     </ClInclude>
     <ClInclude Include="..\..\UnitTest\ReflectionTest.h">
       <Filter>UnitTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Stream\MemoryStream.h">
+      <Filter>Common\Stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UnitTest\MemoryStreamTest.h">
+      <Filter>UnitTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Stream\Interfaces.h">
+      <Filter>Common\Stream</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
