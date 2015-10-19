@@ -69,6 +69,12 @@
     <ClInclude Include="..\..\Common\Stream\Interfaces.h">
       <Filter>Common\Stream</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UnitTest\FileStreamTest.h">
+      <Filter>UnitTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Stream\FileStream.h">
+      <Filter>Common\Stream</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

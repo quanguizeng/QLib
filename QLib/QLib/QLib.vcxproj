@@ -83,10 +83,12 @@
     <ClInclude Include="..\..\Common\Delegate.h" />
     <ClInclude Include="..\..\common\Garbage.h" />
     <ClInclude Include="..\..\Common\Reflection.h" />
+    <ClInclude Include="..\..\Common\Stream\FileStream.h" />
     <ClInclude Include="..\..\Common\Stream\Interfaces.h" />
     <ClInclude Include="..\..\Common\Stream\MemoryStream.h" />
     <ClInclude Include="..\..\Common\Tuple.h" />
     <ClInclude Include="..\..\UnitTest\DelegateTest.h" />
+    <ClInclude Include="..\..\UnitTest\FileStreamTest.h" />
     <ClInclude Include="..\..\UnitTest\GarbageTest.h" />
     <ClInclude Include="..\..\UnitTest\MemoryStreamTest.h" />
     <ClInclude Include="..\..\UnitTest\ReflectionTest.h" />
@@ -99,7 +101,9 @@
     <ClCompile Include="..\..\Common\Reflection.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="QLib.cpp" />
+    <ClCompile Include="QLib.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
