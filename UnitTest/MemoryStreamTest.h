@@ -117,7 +117,6 @@ TEST_CASE(testMemoryStreamReadOnlyMode)
 		memStreamReadWriteMode.close();
 		memStreamReadOnlyMode.close();
 	}
-
 }
 
 #endif

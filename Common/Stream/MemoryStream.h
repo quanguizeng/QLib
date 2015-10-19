@@ -80,6 +80,7 @@ namespace QLib
 			}
 			else if (mMode == MemoryMode::ReadOnly)
 			{
+				mMaxSize = 0;
 				mBuffer = nullptr;
 				mStreamSize = 0;
 				mCurPos = 0;
