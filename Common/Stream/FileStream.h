@@ -108,7 +108,7 @@ namespace QLib
 
 			return true;
 		}
-		bool close()
+		inline bool close()
 		{
 			if (mFile != nullptr)
 			{
@@ -120,21 +120,24 @@ namespace QLib
 
 			return false;
 		}
-		int	read(void* pBuffer, int nSize)
+		inline int	read(void* pBuffer, int nSize)
 		{
+			CHECK_ERROR(mFile != nullptr, L"请先打开文件");
 			CHECK_ERROR(pBuffer != nullptr && nSize >= 0, L"指针为NULL或者大小为负数");
+			CHECK_ERROR(nSize <= size(), L"数据不足，无法读取指定大小数据");
 
 			return fread(pBuffer, 1, nSize, mFile);
 		}
-		int	write(void* pBuffer, int nSize)
+		inline int	write(void* pBuffer, int nSize)
 		{
+			CHECK_ERROR(mFile != nullptr, L"请先打开文件");
 			CHECK_ERROR(pBuffer != nullptr && nSize >= 0, L"指针为NULL或者大小为负数");
 
 			return fwrite(pBuffer, 1, nSize, mFile);
 		}
-		bool flush()
+		inline bool flush()
 		{
-			return fflush(mFile);
+			return fflush(mFile) > 0;
 		}
 
 	protected:
