@@ -86,12 +86,14 @@
     <ClInclude Include="..\..\Common\Stream\FileStream.h" />
     <ClInclude Include="..\..\Common\Stream\Interfaces.h" />
     <ClInclude Include="..\..\Common\Stream\MemoryStream.h" />
+    <ClInclude Include="..\..\Common\Stream\Serialization.h" />
     <ClInclude Include="..\..\Common\Tuple.h" />
     <ClInclude Include="..\..\UnitTest\DelegateTest.h" />
     <ClInclude Include="..\..\UnitTest\FileStreamTest.h" />
     <ClInclude Include="..\..\UnitTest\GarbageTest.h" />
     <ClInclude Include="..\..\UnitTest\MemoryStreamTest.h" />
     <ClInclude Include="..\..\UnitTest\ReflectionTest.h" />
+    <ClInclude Include="..\..\UnitTest\SerializationTest.h" />
     <ClInclude Include="..\..\UnitTest\TupleTest.h" />
     <ClInclude Include="..\..\UnitTest\UnitTest.h" />
     <ClInclude Include="stdafx.h" />

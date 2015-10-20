@@ -8,6 +8,7 @@
 #include "../../UnitTest/ReflectionTest.h"
 #include "../../UnitTest/MemoryStreamTest.h"
 #include "../../UnitTest/FileStreamTest.h"
+#include "../../UnitTest/SerializationTest.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {

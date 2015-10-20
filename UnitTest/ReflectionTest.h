@@ -29,7 +29,7 @@ TEST_CASE(testReflection)
 	testGC.add(pTest);
 }
 
-class TestClass2 :public MmemberBase
+class TestClass2 :public MemberBase
 {
 	DEFINE_DYNAMIC_CREATE(TestClass2);
 	MEMBER_INTERFACE(TestClass2, int, mX);

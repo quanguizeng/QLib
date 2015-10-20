@@ -108,7 +108,7 @@ namespace QLib
 		int	write(void* pBuffer, int nSize)
 		{
 			CHECK_ERROR(mMode == MemoryMode::ReadWrite, L"这是只读内存流，不能往流里写入数据");
-			CHECK_ERROR(pBuffer != nullptr && nSize > 0, L"指针不能为空或者长度不能为负数");
+			CHECK_ERROR(pBuffer != nullptr && nSize >= 0, L"指针不能为空或者长度不能为负数");
 
 			int lastMaxSize = mMaxSize;
 			mMaxSize = nSize + mStreamSize >= mMaxSize ? ((nSize + mStreamSize + 1) / 512 + 1) * 512 : mMaxSize;

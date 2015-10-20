@@ -98,8 +98,8 @@ namespace QLib
 		return str;
 	}
 
-	class MmemberBase;
-	typedef void(*PropertyInterface)(MmemberBase *pObject, void*);
+	class MemberBase;
+	typedef void(*PropertyInterface)(MemberBase *pObject, void*);
 	typedef map<string, PropertyInterface> SetMemberList;
 
 #define SET_MEMEBER_NAME(Object, Name)	removeSpace((string("set")+string(#Name)))
@@ -113,16 +113,16 @@ namespace QLib
 #define SET_MEMBER_VALUE(Object, VarLeft, VarRight) (Object)->setMemberValue(_SET_MEMBER_VALUE(Object, VarLeft, VarRight))
 #define GET_MEMBER_VALUE(Object, VarLeft, VarRight) (Object)->getMemberValue(_GET_MEMBER_VALUE(Object, VarLeft, VarRight))
 
-	class MmemberBase
+	class MemberBase
 	{
 			typedef SetMemberList::const_iterator PropertyIterator;
 	public:
-		MmemberBase() 
+		MemberBase() 
 		{
 			mGetListProperty.clear();
 			mSetListProperty.clear();
 		}
-		virtual ~MmemberBase() 
+		virtual ~MemberBase() 
 		{
 			mGetListProperty.clear();
 			mSetListProperty.clear();
@@ -161,7 +161,7 @@ namespace QLib
 			return true;
 		}
 
-		inline bool getMemberValue(string memberName, MmemberBase *pBase, void* pValue)
+		inline bool getMemberValue(string memberName, MemberBase *pBase, void* pValue)
 		{
 			if (pBase == nullptr || pValue == nullptr)
 			{
@@ -177,7 +177,7 @@ namespace QLib
 			return true;
 		}
 
-		inline bool setMemberValue(string memberName, MmemberBase *pBase, void* pValue)
+		inline bool setMemberValue(string memberName, MemberBase *pBase, void* pValue)
 		{
 			if (pBase == nullptr || pValue == nullptr)
 			{
@@ -199,12 +199,12 @@ namespace QLib
 
 #define MEMBER_INTERFACE(ClassType, VarType, VarName)    \
 public:                                       \
-	inline static void set##VarName(MmemberBase *pBase, void* pValue)    \
+	inline static void set##VarName(MemberBase *pBase, void* pValue)    \
 	{\
 	    ClassType* pSub = dynamic_cast<ClassType*>(pBase);      \
 		pSub->VarName = *(VarType*)pValue;          \
 	}                                         \
-	inline static void get##VarName(MmemberBase *pBase, void* pValue)  \
+	inline static void get##VarName(MemberBase *pBase, void* pValue)  \
 	{\
 	    ClassType* pSub = dynamic_cast<ClassType*>(pBase);      \
 	    VarType* pLeft = (VarType*)pValue;      \

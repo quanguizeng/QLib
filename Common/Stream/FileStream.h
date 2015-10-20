@@ -27,7 +27,6 @@ namespace QLib
 	public:
 		FileStream(wstring filePath, FileMode fileMode)
 		{
-			wchar_t s;
 			wstring mode;
 
 			mFile = nullptr;
