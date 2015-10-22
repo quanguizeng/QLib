@@ -81,6 +81,12 @@
     <ClInclude Include="..\..\UnitTest\SerializationTest.h">
       <Filter>UnitTest</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Common\Stream\StreamHelper.h">
+      <Filter>Common\Stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UnitTest\StreamHelperTest.h">
+      <Filter>UnitTest</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

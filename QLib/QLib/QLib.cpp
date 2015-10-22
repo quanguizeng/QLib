@@ -9,6 +9,7 @@
 #include "../../UnitTest/MemoryStreamTest.h"
 #include "../../UnitTest/FileStreamTest.h"
 #include "../../UnitTest/SerializationTest.h"
+#include "../../UnitTest/StreamHelperTest.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
